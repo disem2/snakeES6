@@ -67,7 +67,7 @@
 	    }, {
 	        key: 'addRabbit',
 	        value: function addRabbit(rabbit) {
-	            //    todo Add rabbit
+	            this.snake = new Rabbit(id, body);
 	        }
 	    }, {
 	        key: 'gameStep',
@@ -75,11 +75,28 @@
 	            //todo Add interval. At every step check snake and rabbits params and draw it.
 	        }
 	    }, {
+	        key: 'drawCell',
+	        value: function drawCell(color, cellSize) {
+	
+	            context.fillRect(0, 0, cellSize, cellSize);
+	            context.strokeRect(0, 0, cellSize, cellSize);
+	        }
+	    }, {
 	        key: 'drawField',
-	        value: function drawField(width, height) {
+	        value: function drawField(cellQantity, cellSize, color) {
+	            var fullsize = cellQantity * cellSize;
+	
 	            var canvas = document.getElementById(this.id);
 	            var context = canvas.getContext('2d');
-	            context.beginPath();
+	            canvas.width = fullsize;
+	            canvas.height = fullsize;
+	            context.fillStyle = color;
+	            for (var i = 0; i < cellQantity; i++) {
+	                for (var j = 0; j < cellQantity; j++) {
+	                    context.fillRect(cellSize * i, cellSize * j, cellSize * (i + 1), cellSize * (j + 1));
+	                    context.strokeRect(cellSize * i, cellSize * j, cellSize * (i + 1), cellSize * (j + 1));
+	                }
+	            }
 	        }
 	    }]);
 	
@@ -87,9 +104,8 @@
 	}();
 	
 	var game = new Game('game');
+	game.drawField(20, 20, '#FFD640');
 	game.addSnake('1', [[1, 1], [1, 2]]);
-	game.drawField(500, 500);
-	console.log(game);
 
 /***/ },
 /* 1 */
