@@ -50,6 +50,8 @@
 	
 	var _Snake = __webpack_require__(1);
 	
+	var _Rabbit = __webpack_require__(2);
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Game = function () {
@@ -60,30 +62,20 @@
 	    }
 	
 	    _createClass(Game, [{
-	        key: 'addSnake',
-	        value: function addSnake(id, body) {
-	            this.snake = new _Snake.Snake(id, body);
-	        }
-	    }, {
-	        key: 'addRabbit',
-	        value: function addRabbit(rabbit) {
-	            this.snake = new Rabbit(id, body);
-	        }
-	    }, {
-	        key: 'gameStep',
-	        value: function gameStep(interval) {
-	            //todo Add interval. At every step check snake and rabbits params and draw it.
-	        }
-	    }, {
 	        key: 'drawCell',
-	        value: function drawCell(color, cellSize) {
+	        value: function drawCell(cellSize) {
+	            var cellIndex = arguments.length <= 1 || arguments[1] === undefined ? [0, 0] : arguments[1];
+	            var context = arguments[2];
 	
-	            context.fillRect(0, 0, cellSize, cellSize);
-	            context.strokeRect(0, 0, cellSize, cellSize);
+	
+	            context.fillRect(cellSize * cellIndex[0], cellSize * cellIndex[1], cellSize, cellSize);
+	            context.strokeRect(cellSize * cellIndex[0], cellSize * cellIndex[1], cellSize, cellSize);
 	        }
 	    }, {
 	        key: 'drawField',
 	        value: function drawField(cellQantity, cellSize, color) {
+	
+	            this.cellSize = cellSize;
 	            var fullsize = cellQantity * cellSize;
 	
 	            var canvas = document.getElementById(this.id);
@@ -91,12 +83,45 @@
 	            canvas.width = fullsize;
 	            canvas.height = fullsize;
 	            context.fillStyle = color;
+	
 	            for (var i = 0; i < cellQantity; i++) {
 	                for (var j = 0; j < cellQantity; j++) {
-	                    context.fillRect(cellSize * i, cellSize * j, cellSize * (i + 1), cellSize * (j + 1));
-	                    context.strokeRect(cellSize * i, cellSize * j, cellSize * (i + 1), cellSize * (j + 1));
+	                    var cellIndex = [i, j];
+	                    this.drawCell(this.cellSize, cellIndex, context);
 	                }
 	            }
+	        }
+	    }, {
+	        key: 'addSnake',
+	        value: function addSnake(id, body) {
+	            this.snake = new _Snake.Snake(id, body);
+	            var canvas = document.getElementById(this.id);
+	            var context = canvas.getContext('2d');
+	            context.fillStyle = '#006A55';
+	            for (var i = 0; i < body; i++) {
+	                var cellIndex = [i, 0];
+	                this.drawCell(this.cellSize, cellIndex, context);
+	            }
+	        }
+	    }, {
+	        key: 'addRabbit',
+	        value: function addRabbit(maxIndex) {
+	            // this.rabbit = new Rabbit(id, body);
+	            var cellIndex = [];
+	            cellIndex[0] = 0.5 + Math.random() * (maxIndex + 1);
+	            cellIndex[1] = 0.5 + Math.random() * (maxIndex + 1);
+	            cellIndex[0] = Math.round(cellIndex[0]);
+	            cellIndex[1] = Math.round(cellIndex[1]);
+	
+	            var canvas = document.getElementById(this.id);
+	            var context = canvas.getContext('2d');
+	            context.fillStyle = '#534ED9';
+	            this.drawCell(this.cellSize, cellIndex, context);
+	        }
+	    }, {
+	        key: 'gameStep',
+	        value: function gameStep(interval) {
+	            //todo Add interval. At every step check snake and rabbits params and draw it.
 	        }
 	    }]);
 	
@@ -105,7 +130,8 @@
 	
 	var game = new Game('game');
 	game.drawField(20, 20, '#FFD640');
-	game.addSnake('1', [[1, 1], [1, 2]]);
+	game.addSnake('1', 4);
+	game.addRabbit(20);
 
 /***/ },
 /* 1 */
@@ -121,6 +147,26 @@
 	
 	var Snake = exports.Snake = function Snake(id, body) {
 	    _classCallCheck(this, Snake);
+	
+	    this.id = id;
+	    this.body = new Set();
+	    this.body.add(body);
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Rabbit = exports.Rabbit = function Rabbit(id, body) {
+	    _classCallCheck(this, Rabbit);
 	
 	    this.id = id;
 	    this.body = new Set(body);
