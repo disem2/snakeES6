@@ -104,15 +104,19 @@
 	            }
 	        }
 	    }, {
+	        key: 'randIndex',
+	        value: function randIndex(maxIndex) {
+	            var cellIndex = [];
+	            cellIndex[0] = Math.floor(0.5 + Math.random() * (maxIndex - 1));
+	            cellIndex[1] = Math.floor(0.5 + Math.random() * (maxIndex - 1));
+	            return cellIndex;
+	        }
+	    }, {
 	        key: 'addRabbit',
 	        value: function addRabbit(maxIndex) {
 	            // this.rabbit = new Rabbit(id, body);
-	            var cellIndex = [];
-	            cellIndex[0] = 0.5 + Math.random() * (maxIndex + 1);
-	            cellIndex[1] = 0.5 + Math.random() * (maxIndex + 1);
-	            cellIndex[0] = Math.round(cellIndex[0]);
-	            cellIndex[1] = Math.round(cellIndex[1]);
-	
+	            var cellIndex = this.randIndex(maxIndex);
+	            console.log(cellIndex);
 	            var canvas = document.getElementById(this.id);
 	            var context = canvas.getContext('2d');
 	            context.fillStyle = '#534ED9';
