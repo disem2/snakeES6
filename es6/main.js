@@ -3,32 +3,43 @@ import {Rabbit} from './Rabbit.js';
     class Game {
         constructor(id) {
             this.id = id;
+            this.fieldColor = '#FFD640';
+
         }
         
-        drawCell(cellSize, cellIndex = [0, 0], context) {
+        drawCell(cellSize, cellIndex = [0, 0], context, color) {
 
+            context.fillStyle = color;
             context.fillRect(cellSize * cellIndex[0],  cellSize * cellIndex[1], cellSize , cellSize );
             context.strokeRect(cellSize * cellIndex[0],  cellSize * cellIndex[1], cellSize , cellSize);
 
         }
 
-        drawField(cellQantity, cellSize, color) {
+        clearCell(cellSize, cellIndex = [0, 0], context) {
 
+            context.clearRect(cellSize * cellIndex[0],  cellSize * cellIndex[1], cellSize , cellSize );
+            // context.strokeRect(cellSize * cellIndex[0],  cellSize * cellIndex[1], cellSize , cellSize);
+
+        }
+
+        drawField(cellQantity, cellSize, color = this.fieldColor) {
+            this.cellQantity = cellQantity;
             this.cellSize = cellSize;
             let fullsize = cellQantity *cellSize;
 
             let canvas = document.getElementById(this.id);
             let context = canvas.getContext('2d');
+            this.context = context;
             canvas.width = fullsize;
             canvas.height = fullsize;
-            context.fillStyle = color;
+            
 
             for (let i = 0; i < cellQantity; i++) 
             {
                 for (let j = 0; j < cellQantity; j++) 
                 {
                     let cellIndex = [i, j];
-                    this.drawCell(this.cellSize, cellIndex, context);
+                    this.drawCell(this.cellSize, cellIndex, context, color);
                     
                 }                
             }            
@@ -36,15 +47,10 @@ import {Rabbit} from './Rabbit.js';
 
         addSnake(id, body) {
             this.snake = new Snake(id, body);
-            let canvas = document.getElementById(this.id);
-            let context = canvas.getContext('2d');
-            context.fillStyle = '#006A55';
-            for (let i = 0; i < body; i++) 
-                {
-                    let cellIndex = [i, 0];
-                    this.drawCell(this.cellSize, cellIndex, context);
-                }   
-        }
+            for (let cellIndex of this.snake.body) { 
+                    this.drawCell(this.cellSize, cellIndex, this.context, this.snake.color);
+                };
+        }        
 
         randIndex(maxIndex) {
             let cellIndex = [];
@@ -53,23 +59,51 @@ import {Rabbit} from './Rabbit.js';
             return cellIndex;
         }
 
-        addRabbit(maxIndex) {
-            // this.rabbit = new Rabbit(id, body);
-            let cellIndex = this.randIndex(maxIndex);
-            console.log(cellIndex);
-            let canvas = document.getElementById(this.id);
-            let context = canvas.getContext('2d');
-            context.fillStyle = '#534ED9';
-            this.drawCell(this.cellSize, cellIndex, context);
+        addRabbit(id) {
+            this.rabbit = new Rabbit(id);
+            let maxIndex = this.cellQantity;
+            let cellIndex = this.checkPosition(this.rabbit.getrandIndex(maxIndex), this.snake.body);
+            this.drawCell(this.cellSize, cellIndex, this.context, this.rabbit.color);
 
         }
-
-        gameStep(interval) {
-        //todo Add interval. At every step check snake and rabbits params and draw it.
+// Check is rabbit cell apered on the snake
+        checkPosition(cellIndex, snakeBody)  {
+        for (let snakeCell of this.snake.body) {
+                if (snakeCell == cellIndex ) {
+                    this.rabbit.getrandIndex(this.cellQantity);
+                } else {
+                    return cellIndex;
+                }
+            }
         }
+
+     moveSnake() {
+        
+        let bodyLength = this.snake.body.length;
+        let nextCell =  this.snake.body[bodyLength - 1][0] + 1;
+        console.log(nextCell);
+        for (let cellIndex of this.snake.body) {
+            this.clearCell(this.cellSize, cellIndex, this.context, this.fieldColor);
+            this.drawCell(this.cellSize, cellIndex, this.context, this.fieldColor);
+        };
+       
+        this.snake.body.shift();
+        this.snake.body.push([nextCell, 0]);
+         console.log(this.snake.body);
+        
+        for (let cellIndex of this.snake.body) {
+            this.drawCell(this.cellSize, cellIndex, this.context, this.snake.color);
+        };
+    }
+
+        // gameStep(interval) {
+        // //todo Add interval. At every step check snake and rabbits params and draw it.
+        // }
     }
 
 let game = new Game('game');
-    game.drawField(20, 20, '#FFD640');
-    game.addSnake('1', 4);
-    game.addRabbit(20);
+    game.drawField(20, 20);
+    game.addSnake('1');
+    game.addRabbit('1');
+    setTimeout(function(){game.moveSnake()}, 1000);
+    // setTimeout(alert('test!!'), 5000);
