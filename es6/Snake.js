@@ -1,7 +1,11 @@
 export class Snake {
-    constructor(id, body){
+
+    constructor(id, body = [[0,0], [1,0], [2,0]]){
         this.id = id;
-        this.body = new Set();
-        this.body.add(body);
+        this.body = body;
+        this.color = '#006A55';
     }
+
+   
+
 }
